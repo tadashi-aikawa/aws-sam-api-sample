@@ -25,6 +25,9 @@ $ aws cloudformation deploy \
 
 ### Run locally
 
+* Run `./db-init.sh` if database is not created.
+  * Run `./db-delete.sh` if databse is already existed.
+
 Need to create `event.json`.
 
 ```
