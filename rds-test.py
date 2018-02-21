@@ -16,12 +16,7 @@ class Human(Base):
 
 Session = sessionmaker()
 Session.configure(bind=engine)
+session = Session()
 
-
-def handler_name(event, context): 
-    session = Session()
-
-    for instance in session.query(Human).order_by(Human.id):
-        print(instance.name)
-    return {'ping': 'ok'}
-
+for instance in session.query(Human).order_by(Human.id):
+    print(instance.name)
