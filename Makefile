@@ -14,7 +14,7 @@ help: ## Print this help
 
 #------
 
-init-db:
+init-db: ## Initialize DB
 	@echo Start $@
 	docker run \
 	    --name rds-mysql \
@@ -25,7 +25,7 @@ init-db:
 	    --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci 
 	@echo End $@
 
-clean-db:
+clean-db: ## Delete DB
 	@echo Start $@
 	docker rm -f `docker ps -aq --filter name=rds-mysql`
 	@echo End $@
@@ -41,16 +41,16 @@ _install:
 	rm -f requirements.txt
 	@echo End $@
 
-build:
+build: ## Build application
 	@echo Start $@
 	mkdir -p dist
 	cp app.py dist/
 	@echo End $@
 
-build-with-install: _install build
+build-with-install: _install build ## Install packages and build application
 
-dev:
+dev: ## Run locally
 	@echo Start $@
-	sam local invoke -e event.json --docker-network 8e110cc4e6c1 'TestFunction'
+	sam local invoke -e event.json TestFunction
 	@echo End $@
 
