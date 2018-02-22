@@ -18,7 +18,7 @@ Session = sessionmaker()
 Session.configure(bind=engine)
 
 
-def handler_name(event, context): 
+def main(event, context): 
     session = Session()
 
     for instance in session.query(Human).order_by(Human.id):
