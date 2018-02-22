@@ -5,6 +5,15 @@ aws-sam-api-sample
 For developer
 -------------
 
+### Run locally
+
+1. `make init-db` (Only once)
+2. `make build-with-install` (Only once)
+3. `make dev`
+
+Run `make clean-db` if you remove db and networks
+
+
 ### Package
 
 ```
@@ -21,16 +30,5 @@ $ aws cloudformation deploy \
     --template-file output-template.yaml \
     --stack-name test \
     --capabilities CAPABILITY_IAM
-```
-
-### Run locally
-
-* Run `./db-init.sh` if database is not created.
-  * Run `./db-delete.sh` if databse is already existed.
-
-Need to create `event.json`.
-
-```
-$ sam local invoke 'TestFunction' -e event.json
 ```
 

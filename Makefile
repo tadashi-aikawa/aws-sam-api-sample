@@ -48,15 +48,15 @@ _install:
 	rm -f requirements.txt
 	@echo End $@
 
-build: ## Build application
+_build:
 	@echo Start $@
 	mkdir -p dist
 	cp app.py dist/
 	@echo End $@
 
-build-with-install: _install build ## Install packages and build application
+build-with-install: _install _build ## Install packages and build application
 
-dev: build ## Run locally
+dev: _build ## Run locally
 	@echo Start $@
 	sam local invoke \
 		-e event.json \
