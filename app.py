@@ -1,9 +1,11 @@
+from os import environ as env
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, String
 from sqlalchemy.orm import sessionmaker
 
-engine = create_engine('mysql+pymysql://root:password@localhost/rds', echo=True)
+
+engine = create_engine(f'mysql+pymysql://root:password@{env["RDS_HOST"]}/rds')
 Base = declarative_base()
 
 

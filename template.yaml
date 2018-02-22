@@ -11,3 +11,4 @@ Resources:
       Environment:
         Variables: 
           S3_BUCKET: mamansoft-aws-sam-api-sample
+          RDS_HOST: rds-sample

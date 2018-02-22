@@ -14,11 +14,17 @@ help: ## Print this help
 
 #------
 
+NETWORK_NAME := br0
+RDS_IP := 192.168.100.100
+
 init-db: ## Initialize DB
 	@echo Start $@
+	docker network create --subnet=192.168.100.0/24 $(NETWORK_NAME)
 	docker run \
 	    --name rds-mysql \
 	    -p 3306:3306 \
+	    --net $(NETWORK_NAME) \
+	    --ip $(RDS_IP) \
 	    -v `pwd`/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d \
 	    -e MYSQL_ROOT_PASSWORD=password \
 	    -d mysql:5.6 \
@@ -27,7 +33,8 @@ init-db: ## Initialize DB
 
 clean-db: ## Delete DB
 	@echo Start $@
-	docker rm -f `docker ps -aq --filter name=rds-mysql`
+	-docker rm -f `docker ps -aq --filter name=rds-mysql`
+	-docker network remove $(NETWORK_NAME)
 	@echo End $@
 
 _install:
@@ -49,8 +56,12 @@ build: ## Build application
 
 build-with-install: _install build ## Install packages and build application
 
-dev: ## Run locally
+dev: build ## Run locally
 	@echo Start $@
-	sam local invoke -e event.json TestFunction
+	sam local invoke \
+		-e event.json \
+		--env-vars env/dev.json \
+		--docker-network $(NETWORK_NAME) \
+		TestFunction 
 	@echo End $@
 
