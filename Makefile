@@ -60,7 +60,7 @@ dev: _build ## Run locally
 	@echo Start $@
 	sam local invoke \
 		-e event.json \
-		--env-vars env/dev.json \
+		--env-vars dev.env \
 		--docker-network $(NETWORK_NAME) \
 		TestFunction 
 	@echo End $@
