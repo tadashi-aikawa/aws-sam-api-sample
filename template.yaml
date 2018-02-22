@@ -5,8 +5,9 @@ Resources:
   TestFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: main.handler_name
+      Handler: app.main
       Runtime: python3.6
+      CodeUri: dist
       Environment:
         Variables: 
           S3_BUCKET: mamansoft-aws-sam-api-sample

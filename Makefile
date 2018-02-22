@@ -51,6 +51,6 @@ build-with-install: _install build
 
 dev:
 	@echo Start $@
-	sam local invoke 'TestFunction' -e event.json
+	sam local invoke -e event.json --docker-network 8e110cc4e6c1 'TestFunction'
 	@echo End $@
 
