@@ -16,6 +16,7 @@ help: ## Print this help
 
 NETWORK_NAME := br0
 RDS_IP := 192.168.100.100
+EVENT := 
 
 init-db: ## Initialize DB
 	@echo Start $@
@@ -56,11 +57,11 @@ _build:
 
 build-with-install: _install _build ## Install packages and build application
 
-dev: _build ## Run locally
+dev: _build ## Run locally (ex. make dev EVENT=find_ichiro.json)
 	@echo Start $@
 	sam local invoke \
-		-e event.json \
-		--env-vars dev.env \
+		-e events/$(EVENT) \
+		--env-vars envs/dev.json \
 		--docker-network $(NETWORK_NAME) \
 		TestFunction 
 	@echo End $@
