@@ -1,10 +1,9 @@
 from os import environ as env
-from typing import NamedTuple
+
+from sqlalchemy import Column, String
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, String
 from sqlalchemy.orm import sessionmaker
-
 
 engine = create_engine(f'mysql+pymysql://root:password@{env["RDS_HOST"]}/rds')
 Base = declarative_base()
@@ -20,16 +19,7 @@ class Human(Base):
     name = Column(String)
 
 
-class Event(NamedTuple):
-    id: int
-
-
-def main(event, context): 
-    e: Event = Event(**event)
+def find_human(id: int) -> Human:
     session = Session()
+    return session.query(Human).filter_by(id=id).first()
 
-    human: Human = session.query(Human).filter_by(id=e.id).first()
-    return {
-            'id': human.id,
-            'name': human.name
-            }

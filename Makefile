@@ -51,7 +51,7 @@ _install:
 _build:
 	@echo Start $@
 	mkdir -p dist
-	cp app.py dist/
+	cp -r aws_sam_sample dist/
 	@echo End $@
 
 build-with-install: _install _build ## Install packages and build application

@@ -5,7 +5,7 @@ Resources:
   TestFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: app.main
+      Handler: aws_sam_sample.app.main
       Runtime: python3.6
       CodeUri: dist
       Environment:
