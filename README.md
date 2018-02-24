@@ -21,7 +21,7 @@ For developer
 $ aws cloudformation package \
     --template-file template.yaml \
     --output-template-file output-template.yaml \
-    --s3-bucket mamansoft-aws-sam-api-sample
+    --s3-bucket mamansoft-aws-sam-sample
 ```
 
 ### Deploy

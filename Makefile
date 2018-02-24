@@ -66,3 +66,15 @@ dev: _build ## Run locally (ex. make dev EVENT=find_ichiro.json)
 		TestFunction 
 	@echo End $@
 
+deploy: ## Deploy
+	@echo Start $@
+	aws cloudformation package \
+	  --template-file template.yaml \
+  	--output-template-file output-template.yaml \
+  	--s3-bucket mamansoft-aws-sam-sample
+	aws cloudformation deploy \
+  	--template-file output-template.yaml \
+  	--stack-name test \
+	  --capabilities CAPABILITY_IAM
+	rm output-template.yaml
+	@echo End $@
