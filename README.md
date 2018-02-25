@@ -15,21 +15,9 @@ For developer
 * Run `make clean-db` if you remove db and networks
 
 
-### Package
-
-```
-$ aws cloudformation package \
-    --template-file template.yaml \
-    --output-template-file output-template.yaml \
-    --s3-bucket mamansoft-aws-sam-sample
-```
-
 ### Deploy
 
 ```
-$ aws cloudformation deploy \
-    --template-file output-template.yaml \
-    --stack-name test \
-    --capabilities CAPABILITY_IAM
+$ make deploy
 ```
 
