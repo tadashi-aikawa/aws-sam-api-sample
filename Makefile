@@ -78,3 +78,9 @@ deploy: ## Deploy
 	  --capabilities CAPABILITY_IAM
 	rm output-template.yaml
 	@echo End $@
+
+test: ## Test
+	@echo Start $@
+	pipenv run pytest tests
+	@echo End $@
+

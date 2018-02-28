@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String
+from sqlalchemy import Column, String, Integer
 from sqlalchemy.ext.declarative import declarative_base
 
 from aws_sam_sample.libs.session import SessionManager
@@ -9,7 +9,7 @@ Base = declarative_base()
 class Human(Base):
     __tablename__ = 'humans'
 
-    id = Column(String, primary_key=True)
+    id = Column(Integer, primary_key=True)
     name = Column(String)
 
 
