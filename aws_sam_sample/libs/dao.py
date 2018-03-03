@@ -1,7 +1,7 @@
 from sqlalchemy import Column, String, Integer
 from sqlalchemy.ext.declarative import declarative_base
 
-from aws_sam_sample.libs.session import SessionManager
+from aws_sam_sample.libs.session import Session
 
 Base = declarative_base()
 
@@ -14,5 +14,6 @@ class Human(Base):
 
 
 def find_human(id: int) -> Human:
-    return SessionManager.create().query(Human).filter_by(id=id).first()
+    session = Session()
+    return session.query(Human).filter_by(id=id).first()
 
