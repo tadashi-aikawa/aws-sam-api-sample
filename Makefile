@@ -16,7 +16,7 @@ help: ## Print this help
 
 NETWORK_NAME := br0
 RDS_IP := 192.168.100.100
-EVENT := 
+EVENT :=
 
 init-db: ## Initialize DB
 	@echo Start $@
@@ -29,13 +29,18 @@ init-db: ## Initialize DB
 	    -v `pwd`/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d \
 	    -e MYSQL_ROOT_PASSWORD=password \
 	    -d mysql:5.6 \
-	    --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci 
+	    --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
 	@echo End $@
 
 clean-db: ## Delete DB
 	@echo Start $@
 	-docker rm -f `docker ps -aq --filter name=rds-mysql`
 	-docker network remove $(NETWORK_NAME)
+	@echo End $@
+
+db: ## Access DB
+	@echo Start $@
+	docker run -it --link rds-mysql:mysql --net $(NETWORK_NAME) --rm mysql sh -c 'exec mysql -h"$(RDS_IP)" -P3306 -uroot -ppassword'
 	@echo End $@
 
 _install:
@@ -63,7 +68,7 @@ dev: _build ## Run locally (ex. make dev EVENT=find_ichiro.json)
 		-e events/$(EVENT) \
 		--env-vars envs/dev.json \
 		--docker-network $(NETWORK_NAME) \
-		TestFunction 
+		TestFunction
 	@echo End $@
 
 deploy: ## Deploy
