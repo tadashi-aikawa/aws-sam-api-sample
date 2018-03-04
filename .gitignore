@@ -105,4 +105,4 @@ ENV/
 /.idea
 
 # ctags
-/tags
+.tags
