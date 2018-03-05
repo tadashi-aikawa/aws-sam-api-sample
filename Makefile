@@ -26,6 +26,7 @@ init-db: ## Initialize DB
 	    -p 3306:3306 \
 	    --net $(NETWORK_NAME) \
 	    --ip $(RDS_IP) \
+	    -v `pwd`/conf.d:/etc/mysql/conf.d \
 	    -v `pwd`/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d \
 	    -e MYSQL_ROOT_PASSWORD=password \
 	    -d mysql:5.6 \
@@ -69,6 +70,13 @@ dev: _build ## Run locally (ex. make dev EVENT=find_ichiro.json)
 		--env-vars envs/dev.json \
 		--docker-network $(NETWORK_NAME) \
 		TestFunction
+	@echo End $@
+
+api: _build ## Run as API
+	@echo Start $@
+	sam local start-api \
+		--env-vars envs/dev.json \
+		--docker-network $(NETWORK_NAME)
 	@echo End $@
 
 deploy: ## Deploy

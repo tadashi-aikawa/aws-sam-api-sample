@@ -9,6 +9,12 @@ Resources:
       Runtime: python3.6
       CodeUri: dist
       Environment:
-        Variables: 
+        Variables:
           S3_BUCKET: mamansoft-aws-sam-api-sample
           RDS_HOST: rds-sample
+      Events:
+        CreateProduct:
+          Type: Api
+          Properties:
+            Path: /member/{id}
+            Method: get
