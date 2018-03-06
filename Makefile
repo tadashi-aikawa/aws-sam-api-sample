@@ -17,6 +17,12 @@ help: ## Print this help
 NETWORK_NAME := br0
 RDS_IP := 192.168.100.100
 EVENT :=
+FUNCTION :=
+
+init: ## Initialize for develop
+	@echo Start $@
+	pipenv install -d
+	@echo End $@
 
 init-db: ## Initialize DB
 	@echo Start $@
@@ -63,13 +69,13 @@ build:
 
 build-with-install: _install build ## Install packages and build application
 
-dev: build ## Run locally (ex. make dev EVENT=find_ichiro.json)
+dev: build ## Run locally (ex. make dev EVENT=find_ichiro.json FUNCTION=MemberFunction)
 	@echo Start $@
 	sam local invoke \
 		-e events/$(EVENT) \
 		--env-vars envs/dev.json \
 		--docker-network $(NETWORK_NAME) \
-		MemberFunction
+		$(FUNCTION)
 	@echo End $@
 
 api: build ## Run as API
