@@ -20,24 +20,40 @@ Prerequirements: `make init`
 make test
 ```
 
+### Run
 
-### Run lambda locally
+#### Before run
 
-1. `make init-db` (Only once)
-2. `make build-with-install` (Only once)
-3. `make dev EVENT=<*.json> FUNCTION=*`
+```
+make init-aws-local
+make install-packages
+```
+
+#### As Lambda locally
+
+```
+make dev EVENT=<*.json> FUNCTION=*
+```
 
 * `<*.json>` accepts json files in a events directory
-* Run `make clean-db` if you remove db and networks
 
+#### As API locally
 
-### Run API locally
+```
+make run-as-api
+```
 
-1. `make init-db` (Only once)
-2. `make build-with-install` (Only once)
-3. `make api`
+#### Show database
 
-* Run `make clean-db` if you remove db and networks
+```
+make db-clien
+```
+
+#### After run
+
+```
+make clean-aws-local
+```
 
 
 ### Deploy
