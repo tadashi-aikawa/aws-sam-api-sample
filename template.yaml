@@ -2,10 +2,10 @@ AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 
 Resources:
-  TestFunction:
+  MemberFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: aws_sam_sample.app.main
+      Handler: aws_sam_sample.controller.member
       Runtime: python3.6
       CodeUri: dist
       Environment:

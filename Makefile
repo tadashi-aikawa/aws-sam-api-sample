@@ -55,24 +55,24 @@ _install:
 	rm -f requirements.txt
 	@echo End $@
 
-_build:
+build:
 	@echo Start $@
 	mkdir -p dist
 	cp -r aws_sam_sample dist/
 	@echo End $@
 
-build-with-install: _install _build ## Install packages and build application
+build-with-install: _install build ## Install packages and build application
 
-dev: _build ## Run locally (ex. make dev EVENT=find_ichiro.json)
+dev: build ## Run locally (ex. make dev EVENT=find_ichiro.json)
 	@echo Start $@
 	sam local invoke \
 		-e events/$(EVENT) \
 		--env-vars envs/dev.json \
 		--docker-network $(NETWORK_NAME) \
-		TestFunction
+		MemberFunction
 	@echo End $@
 
-api: _build ## Run as API
+api: build ## Run as API
 	@echo Start $@
 	sam local start-api \
 		--env-vars envs/dev.json \
