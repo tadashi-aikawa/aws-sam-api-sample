@@ -16,15 +16,28 @@ help: ## Print this help
 
 NETWORK_NAME := br0
 RDS_IP := 192.168.100.100
+PACKAGE_NAME := aws_sam_sample
 EVENT :=
 FUNCTION :=
 
+#----------------------------
+# Develop and Test
+#----------------------------
 init: ## Initialize for develop
 	@echo Start $@
 	pipenv install -d
 	@echo End $@
 
-init-db: ## Initialize DB
+test: ## Test
+	@echo Start $@
+	pipenv run pytest tests
+	@echo End $@
+
+
+#----------------------------
+# Run locally
+#----------------------------
+init-aws-local: ## Initialize AWS local environments
 	@echo Start $@
 	docker network create --subnet=192.168.100.0/24 $(NETWORK_NAME)
 	docker run \
@@ -32,44 +45,29 @@ init-db: ## Initialize DB
 	    -p 3306:3306 \
 	    --net $(NETWORK_NAME) \
 	    --ip $(RDS_IP) \
-	    -v `pwd`/conf.d:/etc/mysql/conf.d \
 	    -v `pwd`/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d \
+	    -v `pwd`/conf.d:/etc/mysql/conf.d \
 	    -e MYSQL_ROOT_PASSWORD=password \
-	    -d mysql:5.6 \
-	    --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+	    -d mysql:5.6
 	@echo End $@
 
-clean-db: ## Delete DB
-	@echo Start $@
-	-docker rm -f `docker ps -aq --filter name=rds-mysql`
-	-docker network remove $(NETWORK_NAME)
-	@echo End $@
+build: ## Build
+	mkdir -p dist/$(PACKAGE_NAME)
+	rsync -av --delete $(PACKAGE_NAME)/ dist/$(PACKAGE_NAME)/
 
-db: ## Access DB
-	@echo Start $@
-	docker run -it --link rds-mysql:mysql --net $(NETWORK_NAME) --rm mysql sh -c 'exec mysql -h"$(RDS_IP)" -P3306 -uroot -ppassword'
-	@echo End $@
-
-_install:
+install-packages: ## Install packages to dist according to Pipfile
 	@echo Start $@
 	rm -rf dist
+	make build
 	rm -f requirements.txt
 
-	mkdir dist
+	mkdir -p dist
 	pipenv lock -r | cut -d' ' -f1 > requirements.txt
 	pip install -r requirements.txt -t dist/
 	rm -f requirements.txt
 	@echo End $@
 
-build:
-	@echo Start $@
-	mkdir -p dist
-	cp -r aws_sam_sample dist/
-	@echo End $@
-
-build-with-install: _install build ## Install packages and build application
-
-dev: build ## Run locally (ex. make dev EVENT=find_ichiro.json FUNCTION=MemberFunction)
+run-as-lambda: build ## Run lambda locally (ex. make dev EVENT=find_ichiro.json FUNCTION=MemberFunction)
 	@echo Start $@
 	sam local invoke \
 		-e events/$(EVENT) \
@@ -78,13 +76,33 @@ dev: build ## Run locally (ex. make dev EVENT=find_ichiro.json FUNCTION=MemberFu
 		$(FUNCTION)
 	@echo End $@
 
-api: build ## Run as API
+run-as-api: build ## Run as API
 	@echo Start $@
 	sam local start-api \
 		--env-vars envs/dev.json \
 		--docker-network $(NETWORK_NAME)
 	@echo End $@
 
+clean-aws-local: ## Clean AWS local environments
+	@echo Start $@
+	-docker rm -f `docker ps -aq --filter name=rds-mysql`
+	-docker network remove $(NETWORK_NAME)
+	@echo End $@
+
+db-client: ## Access DB by using client
+	@echo Start $@
+	docker run -it \
+	    --link rds-mysql:mysql \
+	    --net $(NETWORK_NAME) \
+	    -e LANG=C.UTF-8 \
+	    --rm \
+	    mysql sh -c 'exec mysql -h"$(RDS_IP)" -P3306 -uroot -ppassword'
+	@echo End $@
+
+
+#----------------------------
+# Deploy to staging or...
+#----------------------------
 deploy: ## Deploy
 	@echo Start $@
 	aws cloudformation package \
@@ -96,10 +114,5 @@ deploy: ## Deploy
   	--stack-name test \
 	  --capabilities CAPABILITY_IAM
 	rm output-template.yaml
-	@echo End $@
-
-test: ## Test
-	@echo Start $@
-	pipenv run pytest tests
 	@echo End $@
 
