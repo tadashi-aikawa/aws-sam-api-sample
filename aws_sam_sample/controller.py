@@ -2,9 +2,8 @@ import json
 from typing import Optional, NamedTuple, List, Union
 from functools import wraps
 
-from aws_sam_sample.libs.service import fetch_member
-from aws_sam_sample.libs.dao import find_member, Member
-from aws_sam_sample.libs.models import Event
+from aws_sam_sample.service import fetch_member
+from aws_sam_sample.dao import find_member, Member
 
 
 #------- ライブラリに切り出してもいい --------#

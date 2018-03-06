@@ -1,5 +1,5 @@
-from aws_sam_sample.libs.dao import find_member, Member, Base
-from aws_sam_sample.libs.session import Session, engine
+from aws_sam_sample.dao import find_member, Member, Base
+from aws_sam_sample.session import Session, engine
 
 
 def test_hoge():

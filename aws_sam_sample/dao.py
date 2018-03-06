@@ -1,7 +1,7 @@
 from sqlalchemy import Column, String, Integer, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 
-from aws_sam_sample.libs.session import Session
+from aws_sam_sample.session import Session
 
 Base = declarative_base()
 
