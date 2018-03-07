@@ -9,7 +9,7 @@ Base = declarative_base()
 class Member(Base):
     __tablename__ = 'members'
 
-    id = Column(Integer, primary_key=True)
+    id = Column(String, primary_key=True)
     name = Column(String)
     age = Column(Integer)
 
@@ -17,7 +17,7 @@ class Member(Base):
 class Project(Base):
     __tablename__ = 'projects'
 
-    id = Column(Integer, primary_key=True)
+    id = Column(String, primary_key=True)
     name = Column(String)
     laundh_at = Column(DateTime)
 
