@@ -30,7 +30,7 @@ init: ## Initialize for develop
 
 test: ## Test
 	@echo Start $@
-	pipenv run pytest tests
+	pipenv run pytest tests $(ARGS)
 	@echo End $@
 
 
