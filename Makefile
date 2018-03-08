@@ -16,6 +16,7 @@ help: ## Print this help
 
 NETWORK_NAME := br0
 RDS_IP := 192.168.100.100
+S3_IP := 8000
 PACKAGE_NAME := aws_sam_sample
 EVENT :=
 FUNCTION :=
@@ -49,6 +50,16 @@ init-aws-local: ## Initialize AWS local environments
 	    -v `pwd`/conf.d:/etc/mysql/conf.d \
 	    -e MYSQL_ROOT_PASSWORD=password \
 	    -d mysql:5.6
+	docker run \
+	    --name s3server \
+	    -p $(S3_IP):8000 \
+	    -e SCALITY_ACCESS_KEY_ID=accessKey1 \
+	    -e SCALITY_SECRET_ACCESS_KEY=verySecretKey1 \
+	    -e S3BACKEND=mem \
+	    -d scality/s3server
+	@echo 'Wait 10 minutes for initialize DB & S3'
+	@sleep 10s
+	pipenv run python s3-local-init.py
 	@echo End $@
 
 build: ## Build
@@ -86,6 +97,7 @@ run-as-api: build ## Run as API
 clean-aws-local: ## Clean AWS local environments
 	@echo Start $@
 	-docker rm -f `docker ps -aq --filter name=rds-mysql`
+	-docker rm -f `docker ps -aq --filter name=s3server`
 	-docker network remove $(NETWORK_NAME)
 	@echo End $@
 
