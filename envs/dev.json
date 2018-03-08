@@ -1,5 +1,10 @@
 {
   "MemberFunction": {
     "RDS_HOST": "192.168.100.100"
+  },
+  "AccountFunction": {
+    "RDS_HOST": "192.168.100.100",
+    "S3_ENDPOINT": "http://192.168.100.101:8000",
+    "BUCKET": "mamansoft-accounts"
   }
 }

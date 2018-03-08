@@ -16,7 +16,7 @@ help: ## Print this help
 
 NETWORK_NAME := br0
 RDS_IP := 192.168.100.100
-S3_IP := 8000
+S3_IP := 192.168.100.101
 PACKAGE_NAME := aws_sam_sample
 EVENT :=
 FUNCTION :=
@@ -52,7 +52,9 @@ init-aws-local: ## Initialize AWS local environments
 	    -d mysql:5.6
 	docker run \
 	    --name s3server \
-	    -p $(S3_IP):8000 \
+	    --net $(NETWORK_NAME) \
+	    --ip $(S3_IP) \
+	    -p 8000:8000 \
 	    -e SCALITY_ACCESS_KEY_ID=accessKey1 \
 	    -e SCALITY_SECRET_ACCESS_KEY=verySecretKey1 \
 	    -e S3BACKEND=mem \
