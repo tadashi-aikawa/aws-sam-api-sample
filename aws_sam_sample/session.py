@@ -8,4 +8,3 @@ CONNECTION = f'mysql+pymysql://root:password@{env["RDS_HOST"]}/rds?charset=utf8m
 engine = create_engine(CONNECTION)
 Session = sessionmaker()
 Session.configure(bind=engine)
-

@@ -27,4 +27,3 @@ def fetch_account(name: str) -> Account:
         return Account(name=name, last_login=d['last_login'])
     except s3.meta.client.exceptions.NoSuchKey:
         return None
-
