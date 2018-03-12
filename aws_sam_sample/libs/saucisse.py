@@ -2,9 +2,15 @@ import json
 from functools import wraps
 from typing import List, Union
 
+from marshmallow import Schema, ValidationError
+
 
 def omit_none(d: dict) -> dict:
     return {k: v for k, v in d.items() if v is not None}
+
+
+class Form(Schema):
+    pass
 
 
 class InvalidParam():
@@ -63,12 +69,18 @@ def create_response(body: dict):
     }
 
 
-def endpoint(form):
+def endpoint(form: Form):
     def endpoint_wrapper(func):
         @wraps(func)
         def wrapper(event, context):
             try:
-                return create_response(func(form.from_event(event)))
+                d: dict = event['pathParameters']
+                d.extend(event['queryParameters'])
+                return create_response(func(form.load(d)))
+            except ValidationError as err:
+                print('ValidationError')
+                print(err)
+                return create_error(err)
             except ClientError as err:
                 return create_error(err)
             except ServerError as err:

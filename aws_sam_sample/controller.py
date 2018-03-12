@@ -1,7 +1,10 @@
 from typing import NamedTuple, Optional
 
+from marshmallow import fields
+
 from aws_sam_sample.dao import Member
-from aws_sam_sample.libs.saucisse import ClientError, InvalidParam, endpoint
+from aws_sam_sample.libs.saucisse import (ClientError, Form, InvalidParam,
+                                          endpoint)
 from aws_sam_sample.service import fetch_member
 from aws_sam_sample.storage import Account, fetch_account
 
@@ -15,15 +18,22 @@ class AccountForm(NamedTuple):
         return cls(name=name)
 
 
-class MemberForm(NamedTuple):
-    id: str
+class MemberForm(Form):
+    id: str = fields.String(
+        validate=lambda x: len(x) != 4,
+        error_messages={
+            'type': 'https://github.com/tadashi-aikawa/aws-sam-sample',
+            'title': 'Paramater error',
+            'message': 'Length must be 4',
+            'detail': '...'
+        })
 
     @classmethod
     def from_event(cls, event) -> 'MemberForm':
         id: str = event['pathParameters'].get('id')
         if len(id) != 4:
             raise ClientError(
-                type='/member',
+                type='https://github.com/tadashi-aikawa/aws-sam-sample',
                 title='Paramater error',
                 detail='...',
                 status=400,
@@ -38,7 +48,7 @@ def account(form: AccountForm):
     account: Optional[Account] = fetch_account(form.name)
     if not account:
         raise ClientError(
-            type='/account',
+            type='https://github.com/tadashi-aikawa/aws-sam-sample',
             title='Account is not found',
             detail=f"name: {form.name}",
             status=404)
