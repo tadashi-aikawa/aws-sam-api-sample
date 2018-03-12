@@ -1,12 +1,10 @@
-import boto3
 import json
 from os import environ as env
 from typing import NamedTuple
 
+import boto3
 
-s3 = boto3.resource(
-    's3',
-) if 'S3_ENDPOINT' not in env else boto3.resource(
+s3 = boto3.resource('s3', ) if 'S3_ENDPOINT' not in env else boto3.resource(
     's3',
     aws_access_key_id='accessKey1',
     aws_secret_access_key='verySecretKey1',

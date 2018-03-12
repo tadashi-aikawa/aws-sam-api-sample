@@ -1,9 +1,9 @@
-from typing import Optional, NamedTuple
+from typing import NamedTuple, Optional
 
+from aws_sam_sample.dao import Member
+from aws_sam_sample.libs.saucisse import ClientError, InvalidParam, endpoint
 from aws_sam_sample.service import fetch_member
-from aws_sam_sample.dao import find_member, Member
-from aws_sam_sample.storage import fetch_account, Account
-from aws_sam_sample.libs.saucisse import endpoint, ClientError
+from aws_sam_sample.storage import Account, fetch_account
 
 
 class AccountForm(NamedTuple):
@@ -23,9 +23,13 @@ class MemberForm(NamedTuple):
         id: str = event['pathParameters'].get('id')
         if len(id) != 4:
             raise ClientError(
-                type='/member', title='Paramater error', detail='...', status=400,
-                invalid_params=[{'name': 'id', 'reason': 'Length must be 4'}]
-            )
+                type='/member',
+                title='Paramater error',
+                detail='...',
+                status=400,
+                invalid_params=[
+                    InvalidParam(name='id', reason='Length must be 4')
+                ])
         return cls(id=id)
 
 
@@ -33,7 +37,11 @@ class MemberForm(NamedTuple):
 def account(form: AccountForm):
     account: Optional[Account] = fetch_account(form.name)
     if not account:
-        raise ClientError(type='/account', title='Account is not found', detail=f"name: {form.name}", status=404)
+        raise ClientError(
+            type='/account',
+            title='Account is not found',
+            detail=f"name: {form.name}",
+            status=404)
 
     return {
         'name': account.name,
@@ -45,10 +53,13 @@ def account(form: AccountForm):
 def member(form: MemberForm):
     member: Optional[Member] = fetch_member(form.id)
     if not member:
-        raise ClientError(type='/member', title='Member is not found', detail=f"id: {form.id}", status=404)
+        raise ClientError(
+            type='/member',
+            title='Member is not found',
+            detail=f"id: {form.id}",
+            status=404)
 
     return {
         'id': member.id,
         'name': member.name,
     }
-

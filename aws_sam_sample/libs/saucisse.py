@@ -1,6 +1,6 @@
 import json
-from typing import List, Union
 from functools import wraps
+from typing import List, Union
 
 
 def omit_none(d: dict) -> dict:
@@ -8,13 +8,14 @@ def omit_none(d: dict) -> dict:
 
 
 class InvalidParam():
-    def __init__(self, name: str, reason: str):
+    def __init__(self, name: str, reason: str) -> None:
         self.name = name
         self.reason = reason
 
 
 class ServerError(Exception):
-    def __init__(self, type: str, title: str, status: int, detail: str, instance: str):
+    def __init__(self, type: str, title: str, status: int, detail: str,
+                 instance: str) -> None:
         self.type = type
         self.title = title
         self.status = status
@@ -26,7 +27,12 @@ class ServerError(Exception):
 
 
 class ClientError(Exception):
-    def __init__(self, type: str, title: str, status: int, detail: str, invalid_params: List[InvalidParam]=None):
+    def __init__(self,
+                 type: str,
+                 title: str,
+                 status: int,
+                 detail: str,
+                 invalid_params: List[InvalidParam] = None) -> None:
         self.type = type
         self.title = title
         self.status = status
@@ -40,7 +46,9 @@ class ClientError(Exception):
 def create_error(error: Union[ClientError, ServerError]):
     return {
         'statusCode': error.status,
-        'headers': { 'Content-Type': 'application/problem+json; charset=utf8' },
+        'headers': {
+            'Content-Type': 'application/problem+json; charset=utf8'
+        },
         'body': error.to_json()
     }
 
@@ -48,9 +56,12 @@ def create_error(error: Union[ClientError, ServerError]):
 def create_response(body: dict):
     return {
         'statusCode': 200,
-        'headers': { 'Content-Type': 'application/json; charset=utf8' },
+        'headers': {
+            'Content-Type': 'application/json; charset=utf8'
+        },
         'body': json.dumps(body, ensure_ascii=False)
     }
+
 
 def endpoint(form):
     def endpoint_wrapper(func):
@@ -62,7 +73,7 @@ def endpoint(form):
                 return create_error(err)
             except ServerError as err:
                 return create_error(err)
+
         return wrapper
+
     return endpoint_wrapper
-
-

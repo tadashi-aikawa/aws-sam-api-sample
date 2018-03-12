@@ -8,6 +8,12 @@ verify_ssl = true
 [dev-packages]
 
 pytest = "*"
+"flake8" = "*"
+mypy = "*"
+"autopep8" = "*"
+yapf = "*"
+isort = "*"
+python-language-server = "*"
 
 
 [requires]

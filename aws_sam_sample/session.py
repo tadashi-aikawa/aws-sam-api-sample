@@ -1,4 +1,3 @@
-import threading
 from os import environ as env
 
 from sqlalchemy import create_engine

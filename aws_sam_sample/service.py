@@ -1,7 +1,7 @@
 from typing import Optional
 
-from aws_sam_sample.dao import find_member, Member
 from aws_sam_sample import storage
+from aws_sam_sample.dao import Member, find_member
 from aws_sam_sample.storage import Account
 
 

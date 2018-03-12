@@ -1,9 +1,11 @@
-from sqlalchemy import Column, String, Integer, DateTime
+from typing import Any
+
+from sqlalchemy import Column, DateTime, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 
 from aws_sam_sample.session import Session
 
-Base = declarative_base()
+Base: Any = declarative_base()
 
 
 class Member(Base):
@@ -22,7 +24,6 @@ class Project(Base):
     laundh_at = Column(DateTime)
 
 
-def find_member(id: int) -> Member:
+def find_member(id: str) -> Member:
     session = Session()
     return session.query(Member).filter_by(id=id).first()
-
