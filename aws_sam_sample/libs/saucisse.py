@@ -1,22 +1,33 @@
 import json
 from functools import wraps
-from typing import List, Union
+from typing import Dict, List, Optional, Type, Union
 
-from marshmallow import Schema, ValidationError
+from marshmallow import Schema
 
 
 def omit_none(d: dict) -> dict:
     return {k: v for k, v in d.items() if v is not None}
 
 
-class Form(Schema):
-    pass
+class Form:
+    class FormSchema(Schema):
+        pass
 
+    @classmethod
+    def from_dict(cls, d: dict) -> 'Form':
+        errors = cls.FormSchema().validate(d)
+        if errors:
+            raise ClientError(
+                type='https://github.com/tadashi-aikawa/aws-sam-sample',
+                title="Your request parameters didn't validate.",
+                invalid_params=errors,
+                status=400)
 
-class InvalidParam():
-    def __init__(self, name: str, reason: str) -> None:
-        self.name = name
-        self.reason = reason
+        ins = cls()
+        properties = cls.__annotations__.items()
+        for n, t in properties:
+            setattr(ins, n, d.get(n))
+        return ins
 
 
 class ServerError(Exception):
@@ -37,8 +48,8 @@ class ClientError(Exception):
                  type: str,
                  title: str,
                  status: int,
-                 detail: str,
-                 invalid_params: List[InvalidParam] = None) -> None:
+                 detail: Optional[str] = None,
+                 invalid_params: Dict[str, List[str]] = None) -> None:
         self.type = type
         self.title = title
         self.status = status
@@ -69,18 +80,14 @@ def create_response(body: dict):
     }
 
 
-def endpoint(form: Form):
+def endpoint(form: Type[Form]):
     def endpoint_wrapper(func):
         @wraps(func)
         def wrapper(event, context):
             try:
                 d: dict = event['pathParameters']
-                d.extend(event['queryParameters'])
-                return create_response(func(form.load(d)))
-            except ValidationError as err:
-                print('ValidationError')
-                print(err)
-                return create_error(err)
+                d.update(event['queryStringParameters'])
+                return create_response(func(form.from_dict(d)))
             except ClientError as err:
                 return create_error(err)
             except ServerError as err:

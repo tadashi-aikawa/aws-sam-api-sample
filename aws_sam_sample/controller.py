@@ -1,46 +1,24 @@
-from typing import NamedTuple, Optional
-
-from marshmallow import fields
+from typing import Optional
 
 from aws_sam_sample.dao import Member
-from aws_sam_sample.libs.saucisse import (ClientError, Form, InvalidParam,
-                                          endpoint)
+from aws_sam_sample.libs.saucisse import ClientError, Form, endpoint
 from aws_sam_sample.service import fetch_member
 from aws_sam_sample.storage import Account, fetch_account
+from marshmallow import Schema, fields, validate
 
 
-class AccountForm(NamedTuple):
+class AccountForm(Form):
     name: str
 
-    @classmethod
-    def from_event(cls, event) -> 'AccountForm':
-        name: str = event['pathParameters'].get('name')
-        return cls(name=name)
+    class FormSchema(Schema):
+        name: str = fields.String()
 
 
 class MemberForm(Form):
-    id: str = fields.String(
-        validate=lambda x: len(x) != 4,
-        error_messages={
-            'type': 'https://github.com/tadashi-aikawa/aws-sam-sample',
-            'title': 'Paramater error',
-            'message': 'Length must be 4',
-            'detail': '...'
-        })
+    id: str
 
-    @classmethod
-    def from_event(cls, event) -> 'MemberForm':
-        id: str = event['pathParameters'].get('id')
-        if len(id) != 4:
-            raise ClientError(
-                type='https://github.com/tadashi-aikawa/aws-sam-sample',
-                title='Paramater error',
-                detail='...',
-                status=400,
-                invalid_params=[
-                    InvalidParam(name='id', reason='Length must be 4')
-                ])
-        return cls(id=id)
+    class FormSchema(Schema):
+        id: str = fields.String(validate=validate.Length(equal=4))
 
 
 @endpoint(form=AccountForm)
@@ -64,7 +42,7 @@ def member(form: MemberForm):
     member: Optional[Member] = fetch_member(form.id)
     if not member:
         raise ClientError(
-            type='/member',
+            type='https://github.com/tadashi-aikawa/aws-sam-sample',
             title='Member is not found',
             detail=f"id: {form.id}",
             status=404)
