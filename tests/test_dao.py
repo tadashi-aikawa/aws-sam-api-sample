@@ -1,9 +1,8 @@
-from aws_sam_sample.dao import find_member, Member, Base
+from aws_sam_sample.dao import Base, Member, find_member
 from aws_sam_sample.session import Session, engine
 
 
 class TestFindMember():
-
     def test_found(self):
         Base.metadata.create_all(bind=engine)
         session = Session()
